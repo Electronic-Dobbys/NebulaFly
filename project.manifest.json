@@ -1,0 +1,9 @@
+{
+  "project": "ThreeJS-NebulaFly Next",
+  "purpose": "Autonomous R&D workspace for 2D astrophotography to immersive navigable 3D reconstruction",
+  "baseline": "original/ (read-only)",
+  "development": "nebula-next/",
+  "codex_first_prompt": "CODEX_START_PROMPT.md",
+  "agent_rules": "AGENTS.md",
+  "master_prompt": "MASTER_PROMPT.md"
+}

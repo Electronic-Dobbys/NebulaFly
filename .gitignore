@@ -1,0 +1,44 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+.vite/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Local generated captures / huge artifacts
+tmp/
+temp/
+artifacts/
+exports/
+videos/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dataset originals may be large.
+# Uncomment if you want datasets outside Git:
+# datasets/**
+# !datasets/**/.gitkeep
