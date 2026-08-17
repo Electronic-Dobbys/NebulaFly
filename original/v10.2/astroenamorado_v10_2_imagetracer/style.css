@@ -1,0 +1,26 @@
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#010309;color:#eef4ff;font-family:Inter,Segoe UI,Arial,sans-serif}
+#app{position:relative;width:100%;height:100%}#view{position:absolute;inset:0;width:100%;height:100%;display:block}
+#panel{position:absolute;z-index:20;left:12px;top:12px;width:330px;max-height:calc(100vh - 24px);overflow:auto;padding:14px 15px;border:1px solid #28354d;border-radius:16px;background:rgba(5,9,18,.91);backdrop-filter:blur(12px);box-shadow:0 14px 44px rgba(0,0,0,.35)}
+h1{font-size:19px;margin:0 0 2px}.subtitle{font-size:12px;opacity:.62;margin-bottom:8px}
+section{border-top:1px solid #222d40;padding-top:10px;margin-top:10px}h2{margin:0 0 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.72}
+label{display:block;font-size:12px;margin:7px 0}label span{float:right;opacity:.72}input[type=range]{width:100%;margin-top:4px}
+.check{display:flex;align-items:center;gap:8px}.check input{margin:0}.note{font-size:10px;line-height:1.45;opacity:.62;margin-top:6px}
+button,.fileButton{width:100%;padding:9px 10px;margin:3px 0;border-radius:9px;border:1px solid #30405d;background:#121c2c;color:#eef4ff;cursor:pointer}
+button.primary{background:#183a69;border-color:#35639a}.fileButton{text-align:center}.fileButton input{display:none}
+.stats div{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}.stats span{opacity:.62}
+#diag{position:absolute;z-index:10;right:12px;top:12px;display:flex;gap:7px}
+#diag>div{background:rgba(4,8,16,.88);border:1px solid #28354d;border-radius:10px;padding:5px}
+#diag b{display:block;font-size:9px;opacity:.72;margin-bottom:4px}#diag canvas{display:block;width:118px;height:80px;object-fit:contain;background:#000}
+#status{position:absolute;z-index:11;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(3,7,15,.82);border:1px solid #293750;border-radius:999px;padding:8px 13px;font-size:12px}
+#help{position:absolute;z-index:9;right:16px;bottom:18px;background:rgba(3,7,15,.72);border:1px solid #293750;border-radius:10px;padding:8px 10px;font-size:11px;opacity:.8}
+#watermark{position:absolute;z-index:12;right:22px;bottom:58px;font-weight:700;font-size:16px;text-shadow:0 2px 8px #000;pointer-events:none}
+@media(max-width:1050px){#diag{display:none}#panel{width:290px}#help{display:none}}
+
+select{width:100%;margin-top:4px;padding:7px;border-radius:8px;border:1px solid #30405d;background:#0c1422;color:#eef4ff}
+#stickyActions{position:sticky;top:-14px;z-index:40;margin:8px -4px 10px;padding:8px 4px;background:linear-gradient(rgba(5,9,18,.99) 72%,rgba(5,9,18,.72));backdrop-filter:blur(10px)}
+#diag>div{cursor:zoom-in;transition:transform .12s ease,border-color .12s ease}#diag>div:hover{transform:translateY(-2px);border-color:#6389c7}
+.diagModal{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.86);padding:3vh 3vw;align-items:center;justify-content:center}.diagModal.open{display:flex}
+.diagModalCard{width:min(94vw,1500px);height:min(94vh,1000px);display:flex;flex-direction:column;background:#050914;border:1px solid #334666;border-radius:14px;padding:12px}
+.diagModalBar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.diagModalBar>div{display:flex;gap:7px}.diagModalBar button{width:auto;padding:7px 12px}
+#diagModalCanvas{min-width:0;min-height:0;flex:1;width:100%;height:100%;object-fit:contain;background:#000}#diagCopyState{min-height:16px}

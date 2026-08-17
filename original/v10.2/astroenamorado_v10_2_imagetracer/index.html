@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AstroEnamorado v10 ProcGen · SVG + gas procedural</title>
+<link rel="stylesheet" href="./style.css">
+<script src="https://cdn.jsdelivr.net/gh/jankovicsandras/imagetracerjs@1.2.6/imagetracer_v1.2.6.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./three/build/three.module.js",
+    "three/addons/": "./three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="view"></canvas>
+
+  <aside id="panel">
+    <h1>AstroEnamorado 3D</h1>
+    <div class="subtitle">v10.2 · ImageTracer SVG + gas procedural 3D</div>
+<div id="stickyActions"><button id="rebuildBtn" class="primary">↻ Reprocesar imagen actual</button></div>
+
+    <section>
+      <h2>Imagen</h2>
+      <label class="fileButton">Adjuntar astrofotografía
+        <input id="imageInput" type="file" accept="image/*">
+      </label>
+      <button id="loadOrionBtn">Cargar Orión incluida</button>
+      <button id="loadStatueBtn">Cargar Estatua de la Libertad (demo)</button>
+      <label class="fileButton">Adjuntar starless externo (StarNet/StarXTerminator)
+        <input id="starlessInput" type="file" accept="image/*">
+      </label>
+      <div id="starlessState" class="note">Starless: automático (PSF + inpainting). Para máxima calidad, carga un starless externo.</div>
+      <label class="fileButton">Adjuntar SVG vectorizado (Illustrator/Inkscape)
+        <input id="svgInput" type="file" accept=".svg,image/svg+xml">
+      </label>
+      <button id="loadIC434SvgBtn">Cargar demo IC434: starless + SVG</button>
+      <div id="svgState" class="note">SVG: no cargado. Sin SVG se usa la vectorización automática.</div>
+      <button id="resetSourcesBtn">Descartar starless/SVG externos</button>
+      <div class="note">Al adjuntar una imagen nueva, el programa descarta automáticamente los presets externos de la imagen anterior y vuelve a ejecutar PSF, starless y vectorización.</div>
+    </section>
+
+    <section>
+      <h2>Estrellas</h2>
+      <label>Umbral sigma <span id="sigmaThresholdVal"></span>
+        <input id="sigmaThreshold" type="range" min="2.0" max="10.0" value="4.0" step="0.1">
+      </label>
+      <label>FWHM mínimo <span id="fwhmMinVal"></span>
+        <input id="fwhmMin" type="range" min="0.8" max="5" value="1.4" step="0.1">
+      </label>
+      <label>FWHM máximo <span id="fwhmMaxVal"></span>
+        <input id="fwhmMax" type="range" min="3" max="16" value="9" step="0.2">
+      </label>
+      <label>Elongación máxima <span id="elongMaxVal"></span>
+        <input id="elongMax" type="range" min="1.05" max="3" value="1.7" step="0.05">
+      </label>
+      <label>Núcleo <span id="coreScaleVal"></span>
+        <input id="coreScale" type="range" min="0.25" max="2.0" value="0.8" step="0.05">
+      </label>
+      <label>Glow <span id="glowScaleVal"></span>
+        <input id="glowScale" type="range" min="0.5" max="5" value="2.1" step="0.1">
+      </label>
+      <label>Brillo glow <span id="glowIntensityVal"></span>
+        <input id="glowIntensity" type="range" min="0.2" max="3" value="1.25" step="0.05">
+      </label>
+    </section>
+
+    <section>
+      <h2>Vectorización de nebulosa</h2>
+      <label>Método
+        <select id="vectorMethod">
+          <option value="imagetracer" selected>ImageTracer · SVG alta fidelidad</option>
+          <option value="legacy">Legacy · clusters internos</option>
+        </select>
+      </label>
+      <label>Detalle SVG <span id="traceDetailVal"></span>
+        <input id="traceDetail" type="range" min="0.15" max="2.0" value="0.45" step="0.05">
+      </label>
+      <label>Omitir regiones menores <span id="tracePathOmitVal"></span>
+        <input id="tracePathOmit" type="range" min="0" max="40" value="3" step="1">
+      </label>
+      <label>Colores SVG <span id="traceColorsVal"></span>
+        <input id="traceColors" type="range" min="8" max="96" value="48" step="4">
+      </label>
+      <label>Colores / clusters legacy <span id="vectorColorsVal"></span>
+        <input id="vectorColors" type="range" min="5" max="28" value="14" step="1">
+      </label>
+      <label>Suavizado previo <span id="vectorBlurVal"></span>
+        <input id="vectorBlur" type="range" min="0" max="10" value="3" step="1">
+      </label>
+      <label>Número de formas <span id="maxFormsVal"></span>
+        <input id="maxForms" type="range" min="4" max="80" value="36" step="1">
+      </label>
+      <label>Área mínima <span id="minAreaVal"></span>
+        <input id="minArea" type="range" min="30" max="1800" value="140" step="10">
+      </label>
+      <label>Suavizado <span id="smoothVal"></span>
+        <input id="smooth" type="range" min="0" max="8" value="4" step="1">
+      </label>
+      <label>Esferización <span id="spherizeVal"></span>
+        <input id="spherize" type="range" min="0" max="1" value="0.88" step="0.02">
+      </label>
+      <label>Turbulencia nubes <span id="cloudNoiseVal"></span>
+        <input id="cloudNoise" type="range" min="0" max="0.55" value="0.18" step="0.01">
+      </label>
+      <label>Emisión nebulosa <span id="nebulaEmissionVal"></span>
+        <input id="nebulaEmission" type="range" min="0.3" max="2.5" value="1.15" step="0.05">
+      </label>
+      <label>Glow nebulosa <span id="nebulaGlowVal"></span>
+        <input id="nebulaGlow" type="range" min="0" max="2.5" value="0.85" step="0.05">
+      </label>
+      <label>Espesor base <span id="thicknessVal"></span>
+        <input id="thickness" type="range" min="1" max="24" value="8" step="0.5">
+      </label>
+      <label>Opacidad interna <span id="innerOpacityVal"></span>
+        <input id="innerOpacity" type="range" min="0.15" max="0.95" value="0.62" step="0.01">
+      </label>
+      <label>Opacidad externa <span id="outerOpacityVal"></span>
+        <input id="outerOpacity" type="range" min="0.02" max="0.55" value="0.16" step="0.01">
+      </label>
+      <label>Profundidad total <span id="nebulaDepthVal"></span>
+        <input id="nebulaDepth" type="range" min="10" max="120" value="48" step="2">
+      </label>
+      <label>Máx. paths SVG <span id="svgMaxPathsVal"></span>
+        <input id="svgMaxPaths" type="range" min="20" max="1200" value="320" step="20">
+      </label>
+      <label>Área mínima SVG <span id="svgMinAreaVal"></span>
+        <input id="svgMinArea" type="range" min="0" max="150" value="2" step="1">
+      </label>
+      <label>Redondeo SVG <span id="svgRoundVal"></span>
+        <input id="svgRound" type="range" min="0" max="1" value="0.82" step="0.02">
+      </label>
+      <label>Partículas de gas <span id="gasParticlesVal"></span>
+        <input id="gasParticles" type="range" min="5000" max="120000" value="52000" step="1000">
+      </label>
+      <label>Escala ruido <span id="noiseScaleVal"></span>
+        <input id="noiseScale" type="range" min="0.10" max="4.00" value="1.25" step="0.05">
+      </label>
+      <label>Warp / turbulencia <span id="noiseWarpVal"></span>
+        <input id="noiseWarp" type="range" min="0" max="3.0" value="1.15" step="0.05">
+      </label>
+      <label>Densidad procedural <span id="procDensityVal"></span>
+        <input id="procDensity" type="range" min="-0.25" max="0.45" value="0.08" step="0.01">
+      </label>
+      <label>Falloff <span id="procFalloffVal"></span>
+        <input id="procFalloff" type="range" min="1.0" max="10.0" value="4.0" step="0.1">
+      </label>
+      <label>Espesor volumétrico <span id="volumeThicknessVal"></span>
+        <input id="volumeThickness" type="range" min="0.30" max="3.50" value="1.30" step="0.05">
+      </label>
+      <label>Tamaño mota gas <span id="gasPointSizeVal"></span>
+        <input id="gasPointSize" type="range" min="0.3" max="4.0" value="1.35" step="0.05">
+      </label>
+      <label>Emisión procedural <span id="procEmissionVal"></span>
+        <input id="procEmission" type="range" min="0.2" max="3.5" value="1.15" step="0.05">
+      </label>
+      <label class="check"><input id="showLegacyMesh" type="checkbox"> Mostrar mesh legacy (debug)</label>
+      <div class="note">El SVG ya no es la superficie visible final: define el dominio de la nube. Dentro de cada forma se genera gas 3D mediante ruido multiescala y domain-warp, inspirado en el artículo de wwwtyro.</div>
+    </section>
+
+    <section>
+      <h2>Plano starless</h2>
+      <label>Z del plano <span id="planeZVal"></span>
+        <input id="planeZ" type="range" min="-60" max="60" value="0" step="1">
+      </label>
+      <label>Opacidad <span id="planeOpacityVal"></span>
+        <input id="planeOpacity" type="range" min="0" max="1" value="0.58" step="0.02">
+      </label>
+      <label class="check"><input id="showPlane" type="checkbox" checked> Mostrar plano starless</label>
+    </section>
+
+    <section>
+      <h2>Vista</h2>
+      <label class="check"><input id="showWire" type="checkbox"> Wireframe nebulosa</label>
+      <button id="homeBtn">HOME</button>
+      <button id="travelBtn" class="primary">Entrar en modo viaje</button>
+    </section>
+
+    <section class="stats">
+      <div><span>Estrellas</span><b id="starCount">0</b></div>
+      <div><span>Formas 3D</span><b id="formCount">0</b></div>
+      <div><span>Análisis</span><b id="analysisSize">—</b></div>
+    </section>
+  </aside>
+
+  <div id="diag" title="Haz clic en una imagen para ampliarla">
+    <div data-diag="diagOriginal"><b>Original</b><canvas id="diagOriginal"></canvas></div>
+    <div data-diag="diagStarless"><b>Starless</b><canvas id="diagStarless"></canvas></div>
+    <div data-diag="diagMask"><b>PSF mask</b><canvas id="diagMask"></canvas></div>
+    <div data-diag="diagForms"><b>Vector SVG</b><canvas id="diagForms"></canvas></div>
+    <div data-diag="diagPoster"><b>Posterizado</b><canvas id="diagPoster"></canvas></div>
+  </div>
+  <div id="diagModal" class="diagModal" aria-hidden="true">
+    <div class="diagModalCard">
+      <div class="diagModalBar">
+        <b id="diagModalTitle">Diagnóstico</b>
+        <div><button id="diagCopyBtn">Copiar imagen</button><button id="diagSaveBtn">Guardar PNG</button><button id="diagCloseBtn">Cerrar</button></div>
+      </div>
+      <canvas id="diagModalCanvas"></canvas>
+      <div id="diagCopyState" class="note"></div>
+    </div>
+  </div>
+
+  <div id="status">Cargando…</div>
+  <div id="help"><b>WASD</b> mover · ratón mirar · Espacio subir · Shift bajar · ESC liberar</div>
+  <div id="watermark">@astroenamorado</div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
